@@ -1,0 +1,8 @@
+db/*
+simu/work/*
+simu/old/*
+src/work/*
+*.qsf
+*.qws
+*.qpf
+*.wlf
