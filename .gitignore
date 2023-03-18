@@ -1,7 +1,6 @@
-db/*
-simu/work/*
-simu/old/*
-src/work/*
+db/
+work/
+old/
 *.qsf
 *.qws
 *.qpf
