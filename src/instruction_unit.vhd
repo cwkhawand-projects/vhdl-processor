@@ -13,11 +13,11 @@ entity INSTRUCTION_UNIT is
 end INSTRUCTION_UNIT;
 
 architecture RTL of INSTRUCTION_UNIT is
-    Signal A, B, PC_mux, PC : std_logic_vector(31 downto 0);
+    Signal A, B, PC_mux, PC, Offset_extended : std_logic_vector(31 downto 0);
 begin
 
 A <= std_logic_vector(unsigned(PC) + 1);
-B <= std_logic_vector(unsigned(A) + unsigned(Offset));
+B <= std_logic_vector(unsigned(A) + unsigned(Offset_extended));
 
 mux2v1: entity work.MUX2V1
   port map (
@@ -39,6 +39,15 @@ instruction_memory: entity work.INSTRUCTION_MEMORY
   port map (
     PC          => PC,
     Instruction => Instruction
+  );
+
+pc_extender: entity work.SIGN_EXTENDER
+  generic map (
+    N => 24
+  )
+  port map (
+    E => Offset,
+    S => Offset_extended
   );
 
 end RTL;

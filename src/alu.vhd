@@ -13,11 +13,11 @@ entity ALU is
 end ALU;
 
 architecture RTL of alu is
-	Signal A_int, B_int : signed(32 downto 0);
-	Signal S_int 		: signed(32 downto 0);
+	Signal A_int, B_int : unsigned(32 downto 0);
+	Signal S_int 		: unsigned(32 downto 0);
 begin
-	A_int <= '0' & signed(A);
-	B_int <= '0' & signed(B);
+	A_int <= '0' & unsigned(A);
+	B_int <= '0' & unsigned(B);
 
 	With OP select
 		S_int <= A_int + B_int		when "000",

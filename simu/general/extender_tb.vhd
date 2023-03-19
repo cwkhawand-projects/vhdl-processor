@@ -2,10 +2,10 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity PC_EXTENDER_tb is
+entity EXTENDER_tb is
 end entity;
 
-architecture Bench of PC_EXTENDER_tb is
+architecture Bench of EXTENDER_tb is
     Signal E  : std_logic_vector(23 downto 0);
     Signal S  : std_logic_vector(31 downto 0);
     Signal OK : boolean := TRUE;
@@ -22,16 +22,23 @@ begin
         OK <= FALSE;
     end if;
 
+    E <= "111100000000000000001010";
+    wait for 5 ns;
+    if (S /= x"00F0000A") then
+        report "Expected S = 0x00F0000A, but got S = " & to_hex_string(S);
+        OK <= FALSE;
+    end if;
+
     if (OK) then
-        report "PC extender testbench passed";
+        report "Extender testbench passed";
     else
-        report "PC extender testbench failed";
+        report "Extender testbench failed";
     end if;
 
     wait;
 end process;
 
-pc_extender: entity work.PC_EXTENDER
+pc_extender: entity work.EXTENDER
     port map (
         E => E,
         S => S
