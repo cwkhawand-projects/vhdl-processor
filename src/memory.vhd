@@ -4,7 +4,8 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity MEMORY is
     generic (
-        SIZE : integer := 64
+        SIZE : integer := 64;
+        isTest : boolean := FALSE
     );
     port (
         Clk     : in std_logic;
@@ -23,7 +24,11 @@ architecture RTL of MEMORY is
         variable result : table;
     begin
         for i in SIZE-1 downto 0 loop
-            result(i) := (others => '0');
+            if (not isTest) then
+                result(i) := (others => '0');
+            else
+                result(i) := std_logic_vector(to_unsigned(i, 32));
+            end if;
         end loop;
         
         return result;

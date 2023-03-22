@@ -5,19 +5,20 @@ use ieee.numeric_std.all;
 entity ALU is
 	port
 	(
-		OP			: in std_logic_vector(2 downto 0);
-		A, B		: in std_logic_vector(31 downto 0);
-		S			: out std_logic_vector(31 downto 0);
-		N, Z, C, V 	: out std_logic
+		OP	  : in std_logic_vector(2 downto 0);
+		A, B  : in std_logic_vector(31 downto 0);
+		S	  : out std_logic_vector(31 downto 0);
+		Flags : out std_logic_vector(3 downto 0)
 	);
 end ALU;
 
 architecture RTL of alu is
-	Signal A_int, B_int : unsigned(32 downto 0);
-	Signal S_int 		: unsigned(32 downto 0);
+	Signal A_int, B_int : signed(32 downto 0);
+	Signal S_int 		: signed(32 downto 0);
+	Signal N, Z, C, V	: std_logic;
 begin
-	A_int <= '0' & unsigned(A);
-	B_int <= '0' & unsigned(B);
+	A_int <= resize(signed(A), 33);
+	B_int <= resize(signed(B), 33);
 
 	With OP select
 		S_int <= A_int + B_int		when "000",
@@ -36,4 +37,6 @@ begin
 	Z <= '1' when S_int(31 downto 0) = x"00000000" else '0';
 	C <= S_int(32);
 	V <= '1' when A(31) = B(31) and S_int(31) /= A(31) else '0';
+
+	Flags <= N & Z & C & V;
 end RTL;

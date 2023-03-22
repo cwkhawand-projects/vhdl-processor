@@ -12,8 +12,9 @@ architecture Bench of PROCESSING_UNIT_TB is
     Signal RW       : std_logic_vector(3 downto 0);
     Signal MemWr    : std_logic := '0';
     Signal RegWr    : std_logic := '0';
+    Signal RegSel   : std_logic := '1';
     Signal Imm8     : std_logic_vector(7 downto 0) := x"00";
-    Signal MemtoReg : std_logic := '0';
+    Signal WrSrc    : std_logic := '0';
     Signal ALUctr   : std_logic_vector(2 downto 0);
     Signal ALUSrc   : std_logic := '0';
     Signal ALUout   : std_logic_vector(31 downto 0);
@@ -48,13 +49,13 @@ begin
     RW <= x"0";
     RegWr <= '1';
     ALUSrc <= '0';
-    MemtoReg <= '0';
+    WrSrc <= '0';
     wait for 10 ns;
     RegWr <= '0';
 
     -- Return register content
     ALUctr <= "011";
-    MemtoReg <= '0';
+    WrSrc <= '0';
     RA <= x"0";
     wait for 10 ns;
 
@@ -65,13 +66,13 @@ begin
     Imm8 <= x"0A";
     RegWr <= '1';
     ALUSrc <= '1';
-    MemtoReg <= '0';
+    WrSrc <= '0';
     wait for 10 ns;
     RegWr <= '0';
 
     -- Return register content
     ALUctr <= "011";
-    MemtoReg <= '0';
+    WrSrc <= '0';
     RA <= x"1";
     wait for 10 ns;
 
@@ -82,13 +83,13 @@ begin
     RW <= x"2";
     RegWr <= '1';
     ALUSrc <= '0';
-    MemtoReg <= '0';
+    WrSrc <= '0';
     wait for 10 ns;
     RegWr <= '0';
 
     -- Return register content
     ALUctr <= "011";
-    MemtoReg <= '0';
+    WrSrc <= '0';
     RA <= x"2";
     wait for 10 ns;
 
@@ -99,13 +100,13 @@ begin
     Imm8 <= x"0A";
     RegWr <= '1';
     ALUSrc <= '1';
-    MemtoReg <= '0';
+    WrSrc <= '0';
     wait for 10 ns;
     RegWr <= '0';
 
     -- Return register content
     ALUctr <= "011";
-    MemtoReg <= '0';
+    WrSrc <= '0';
     RA <= x"3";
     wait for 10 ns;
 
@@ -115,13 +116,13 @@ begin
     RW <= x"6";
     RegWr <= '1';
     ALUSrc <= '0';
-    MemtoReg <= '0';
+    WrSrc <= '0';
     wait for 10 ns;
     RegWr <= '0';
 
     -- Return register content
     ALUctr <= "011";
-    MemtoReg <= '0';
+    WrSrc <= '0';
     RA <= x"6";
     wait for 10 ns;
 
@@ -132,7 +133,7 @@ begin
     MemWr <= '1';
     RegWr <= '0';
     ALUSrc <= '0';
-    MemtoReg <= '1';
+    WrSrc <= '1';
     wait for 10 ns;
     MemWr <= '0';
     wait for 10 ns;
@@ -143,13 +144,13 @@ begin
     RW <= x"7";
     RegWr <= '1';
     ALUSrc <= '0';
-    MemtoReg <= '1';
+    WrSrc <= '1';
     wait for 10 ns;
     RegWr <= '0';
 
     -- Return register content
     ALUctr <= "011";
-    MemtoReg <= '0';
+    WrSrc <= '0';
     RA <= x"7";
     wait for 10 ns;
 
@@ -213,13 +214,14 @@ PROCESSING_UNIT: entity work.PROCESSING_UNIT(RTL)
     port map (
         Clk      => Clk,
         Reset    => Reset,
-        RA       => RA,
-        RB       => RB,
-        RW       => RW,
+        Rn       => RA,
+        Rm       => RB,
+        Rd       => RW,
         MemWr    => MemWr,
         RegWr    => RegWr,
+        RegSel   => RegSel,
         Imm8     => Imm8,
-        MemtoReg => MemtoReg,
+        WrSrc    => WrSrc,
         ALUctr   => ALUctr,
         ALUSrc   => ALUSrc,
         ALUout   => ALUout,

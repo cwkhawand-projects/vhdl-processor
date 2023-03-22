@@ -22,7 +22,7 @@ end REGISTERS;
 architecture RTL of REGISTERS is
     type table is array(SIZE-1 downto 0) of std_logic_vector(31 downto 0);
 
-    function init_banc return table is
+    function init_registers return table is
         variable result : table;
     begin
         for i in SIZE-2 downto 0 loop
@@ -31,20 +31,20 @@ architecture RTL of REGISTERS is
         
         result(SIZE-1) := x"00000030";
         return result;
-    end init_banc;
+    end init_registers;
 
-    signal Banc : table := init_banc;
+    signal Registers : table := init_registers;
 begin
-    A <= Banc(to_integer(unsigned(RA)));
-    B <= Banc(to_integer(unsigned(RB)));
+    A <= Registers(to_integer(unsigned(RA)));
+    B <= Registers(to_integer(unsigned(RB)));
 
     process (Clk, Reset)
     begin
         if (Reset = '1') then
-            Banc <= init_banc;
+            Registers <= init_registers;
         elsif (rising_edge(Clk)) then
             if (WE = '1') then
-                Banc(to_integer(unsigned(RW))) <= W;
+                Registers(to_integer(unsigned(RW))) <= W;
             end if;
         end if;
     end process;

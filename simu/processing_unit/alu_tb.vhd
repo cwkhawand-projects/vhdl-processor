@@ -6,10 +6,10 @@ entity ALU_tb is
 end entity;
 
 architecture Bench of ALU_tb is
-    Signal OP			: std_logic_vector(2 downto 0);
-    Signal A, B, S		: std_logic_vector(31 downto 0) := (others => '0');
-    Signal N, Z, C, V 	: std_logic;
-    Signal OK           : boolean := TRUE;
+    Signal OP      : std_logic_vector(2 downto 0);
+    Signal A, B, S : std_logic_vector(31 downto 0) := (others => '0');
+    Signal Flags   : std_logic_vector(3 downto 0) := (others => '0');
+    Signal OK      : boolean := TRUE;
 begin
 
 UUT: process
@@ -27,15 +27,15 @@ begin
                 OK <= FALSE;
             end if;
 
-            if (i = 0 and j = 0 and Z /= '1') then
+            if (i = 0 and j = 0 and Flags(2) /= '1') then
                 report "Error: Z should be 1 when i = 0 and j = 0" severity error;
                 OK <= FALSE;
-            elsif ((i /= 0 or j /= 0) and Z /= '0') then
+            elsif ((i /= 0 or j /= 0) and Flags(2) /= '0') then
                 report "Error: Z should be 0 when i /= 0 or j /= 0" severity error;
                 OK <= FALSE;
             end if;
 
-            if (C /= '0') then
+            if (Flags(1) /= '0') then
                 report "Error: C should be 0 since there is no carry here" severity error;
                 OK <= FALSE;
             end if;
@@ -45,7 +45,7 @@ begin
     A <= "10000000000000000000000000000000";
     B <= "10000000000000000000000000000000";
     wait for 1 ns;
-    if (C /= '1') then
+    if (Flags(1) /= '1') then
         report "Error: C should be 1 since there is a carry here" severity error;
         OK <= FALSE;
     end if;
@@ -70,15 +70,15 @@ begin
                 OK <= FALSE;
             end if;
 
-            if (i = 0 and j = 0 and Z /= '1') then
+            if (i = 0 and j = 0 and Flags(2) /= '1') then
                 report "Error: Z should be 1 when i = 0 and j = 0" severity error;
                 OK <= FALSE;
             end if;
 
-            if (i > j and N /= '0') then
+            if (i > j and Flags(3) /= '0') then
                 report "Error: N should be 0 when i > j" severity error;
                 OK <= FALSE;
-            elsif (i < j and N = '0') then
+            elsif (i < j and Flags(3) = '0') then
                 report "Error: N should be 1 when i < j" severity error;
                 OK <= FALSE;
             end if;
@@ -134,7 +134,7 @@ begin
     A <= x"FFFFFFFF";
     B <= x"00000001";
     wait for 1 ns;
-    if (C /= '1') then
+    if (Flags(1) /= '1') then
         report "Error: C should be 1 since there is a carry here" severity error;
         OK <= FALSE;
     end if;
@@ -143,7 +143,7 @@ begin
     A <= x"7FFFFFFF";
     B <= x"7FFFFFFF";
     wait for 1 ns;
-    if (V /= '1') then
+    if (Flags(0) /= '1') then
         report "Error: V should be 1 since there is an overflow here" severity error;
         OK <= FALSE;
     end if;
@@ -159,14 +159,11 @@ end process;
 
 alu: entity work.ALU(RTL)
     port map (
-        OP => OP,
-        A => A,
-        B => B,
-        S => S,
-        N => N,
-        Z => Z,
-        C => C,
-        V => V
+        OP    => OP,
+        A     => A,
+        B     => B,
+        S     => S,
+        Flags => Flags
     );
 
 end Bench;

@@ -10,14 +10,12 @@ entity INSTRUCTION_DECODER is
     RegWr       : out std_logic;
     RegSel      : out std_logic;
     ALUctr      : out std_logic_vector(2 downto 0);
-    MemToReg    : out std_logic;
     ALUSrc      : out std_logic;
     WrSrc       : out std_logic;
     MemWr       : out std_logic;
     RegAff      : out std_logic;
     Imm8        : out std_logic_vector(7 downto 0);
-    Imm24       : out std_logic_vector(23 downto 0);
-    Display     : out std_logic_vector(31 downto 0);
+    Imm24       : out std_logic_vector(23 downto 0)
   );
 end INSTRUCTION_DECODER;
 
@@ -31,7 +29,7 @@ begin
     if (Instruction(27 downto 26) = "00") then
         if (Instruction(24 downto 21) = "1101") then
             current_instruction <= MOV;
-        elsif (Instruction(24 downto 21) = "0000") then
+        elsif (Instruction(24 downto 21) = "0100") then
             if (Instruction(25) = '0') then
                 current_instruction <= ADDr;
             else
@@ -47,45 +45,139 @@ begin
             current_instruction <= LDR;
         end if;
     elsif (Instruction(27 downto 26) = "10") then
-        if (Instruction(24 downto 21) = "1110") then
+        if (Instruction(31 downto 28) = "1110") then
             current_instruction <= BAL;
-        elsif (Instruction(24 downto 21) = "1011") then
+        elsif (Instruction(31 downto 28) = "1011") then
             current_instruction <= BLT;
         end if;
     end if;
 end process;
 
-decoder: process(current_instruction)
+instruction_decoder: process(current_instruction, Instruction)
 begin
     case current_instruction is
-        when MOV =>
+        when ADDi =>
             nPCSel <= '0';
-            PSREn <= '0';
-            RegWr <= '0';
-            RegSel <= '0';
+            RegWr <= '1';
+            ALUSrc <= '1';
             ALUctr <= "000";
-            MemToReg <= '0';
-            ALUSrc <= '0';
-            WrSrc <= '0';
+            PSREn <= '1';
             MemWr <= '0';
+            WrSrc <= '0';
+            RegSel <= '1';
+            RegAff <= '0';
+            Imm8 <= Instruction(7 downto 0);
+            Imm24 <= (others => '0');
+        when ADDr =>
+            nPCSel <= '0';
+            RegWr <= '1';
+            ALUSrc <= '0';
+            ALUctr <= "000";
+            PSREn <= '1';
+            MemWr <= '0';
+            WrSrc <= '0';
+            RegSel <= '0';
             RegAff <= '0';
             Imm8 <= (others => '0');
             Imm24 <= (others => '0');
-            Display <= (others => '0');
+        when BAL =>
+            nPCSel <= '1';
+            RegWr <= '0';
+            ALUSrc <= '1';
+            ALUctr <= "011";
+            PSREn <= '0';
+            MemWr <= '0';
+            WrSrc <= '0';
+            RegSel <= '0';
+            RegAff <= '0';
+            Imm8 <= (others => '0');
+            Imm24 <= Instruction(23 downto 0);
+        when BLT =>
+            if (Flags(3) = '1') then
+                nPCSel <= '1';
+                RegWr <= '0';
+                ALUSrc <= '1';
+                ALUctr <= "011";
+                PSREn <= '0';
+                MemWr <= '0';
+                WrSrc <= '0';
+                RegSel <= '0';
+                RegAff <= '0';
+                Imm8 <= (others => '0');
+                Imm24 <= Instruction(23 downto 0);
+                else
+                nPCSel <= '1';
+                RegWr <= '0';
+                ALUSrc <= '1';
+                ALUctr <= "011";
+                PSREn <= '0';
+                MemWr <= '0';
+                WrSrc <= '0';
+                RegSel <= '0';
+                RegAff <= '0';
+                Imm8 <= (others => '0');
+                Imm24 <= (others => '0');
+                end if;
+        when CMP =>
+            nPCSel <= '0';
+            RegWr <= '0';
+            ALUSrc <= '1';
+            ALUctr <= "010";
+            PSREn <= '1';
+            MemWr <= '0';
+            WrSrc <= '0';
+            RegSel <= '1';
+            RegAff <= '0';
+            Imm8 <= Instruction(7 downto 0);
+            Imm24 <= (others => '0');
+        when LDR =>
+            nPCSel <= '1';
+            RegWr <= '1';
+            ALUSrc <= '0';
+            ALUctr <= "011";
+            PSREn <= '0';
+            MemWr <= '0';
+            WrSrc <= '1';
+            RegSel <= '1';
+            RegAff <= '0';
+            Imm8 <= (others => '0');
+            Imm24 <= (others => '0');
+        when MOV =>
+            nPCSel <= '0';
+            RegWr <= '1';
+            ALUSrc <= '1';
+            ALUctr <= "001";
+            PSREn <= '0';
+            MemWr <= '0';
+            WrSrc <= '0';
+            RegSel <= '1';
+            RegAff <= '0';
+            Imm8 <= Instruction(7 downto 0);
+            Imm24 <= (others => '0');
+        when STR =>
+            nPCSel <= '0';
+            RegWr <= '0';
+            ALUSrc <= '0';
+            ALUctr <= "011";
+            PSREn <= '0';
+            MemWr <= '1';
+            WrSrc <= '0';
+            RegSel <= '1';
+            RegAff <= '1';
+            Imm8 <= (others => '0');
+            Imm24 <= (others => '0');
         when others =>
             nPCSel <= '0';
             PSREn <= '0';
             RegWr <= '0';
             RegSel <= '0';
             ALUctr <= "000";
-            MemToReg <= '0';
             ALUSrc <= '0';
             WrSrc <= '0';
             MemWr <= '0';
             RegAff <= '0';
             Imm8 <= (others => '0');
             Imm24 <= (others => '0');
-            Display <= (others => '0');
     end case;
 end process;
 
