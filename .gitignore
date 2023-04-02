@@ -1,6 +1,7 @@
 db/
 work/
 old/
+fit/
 *.qsf
 *.qws
 *.qpf
