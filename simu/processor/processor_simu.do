@@ -1,15 +1,15 @@
 vlib work
 
-vcom -2008 ../src/alu.vhd
-vcom -2008 ../src/instruction_memory.vhd
-vcom -2008 ../src/memory.vhd
-vcom -2008 ../src/psr.vhd
-vcom -2008 ../src/reg_en.vhd
-vcom -2008 ../src/registers.vhd
-vcom -2008 ../src/instruction_unit.vhd
-vcom -2008 ../src/instruction_decoder.vhd
-vcom -2008 ../src/processing_unit.vhd
-vcom -2008 ../src/processor.vhd
+vcom -2008 ../../src/alu.vhd
+vcom -2008 ../../src/instruction_memory.vhd
+vcom -2008 ../../src/memory.vhd
+vcom -2008 ../../src/psr.vhd
+vcom -2008 ../../src/reg_en.vhd
+vcom -2008 ../../src/registers.vhd
+vcom -2008 ../../src/instruction_unit.vhd
+vcom -2008 ../../src/instruction_decoder.vhd
+vcom -2008 ../../src/processing_unit.vhd
+vcom -2008 ../../src/processor.vhd
 vcom -2008 processor_tb.vhd
 
 vsim processor_tb(Bench)

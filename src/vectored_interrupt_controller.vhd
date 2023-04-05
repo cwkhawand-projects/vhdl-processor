@@ -20,7 +20,7 @@ VICPC <= x"00000009" when IRQ0_memo = '1' else
          x"00000015" when IRQ1_memo = '1' else
          x"00000000";
 
-IRQ <= IRQ0_memo or IRQ1_memo;
+IRQ <= (IRQ0_memo or IRQ1_memo) and not(IRQ_SERV);
 
 sampling: process(Clk, Reset)
     variable IRQ0_before, IRQ1_before : std_logic;

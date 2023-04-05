@@ -16,8 +16,8 @@ entity INSTRUCTION_DECODER is
     MemWr       : out std_logic;
     RegAff      : out std_logic;
     Imm8        : out std_logic_vector(7 downto 0);
-    Imm24       : out std_logic_vector(23 downto 0)
-    IRQ_END     : out std_logic;
+    Imm24       : out std_logic_vector(23 downto 0);
+    IRQ_END     : out std_logic
   );
 end INSTRUCTION_DECODER;
 
@@ -28,7 +28,9 @@ begin
 
 instruction_assigner: process(Instruction)
 begin
-    if (Instruction(27 downto 26) = "00") then
+    if (Instruction = x"EB000000") then
+        current_instruction <= BX;
+    elsif (Instruction(27 downto 26) = "00") then
         if (Instruction(24 downto 21) = "1101") then
             current_instruction <= MOV;
         elsif (Instruction(24 downto 21) = "0100") then
@@ -48,12 +50,14 @@ begin
         end if;
     elsif (Instruction(27 downto 26) = "10") then
         if (Instruction(31 downto 28) = "1110") then
-            current_instruction <= BAL;
+            if (Instruction(25 downto 24) = "11") then
+                current_instruction <= BX;
+            else
+                current_instruction <= BAL;
+            end if;
         elsif (Instruction(31 downto 28) = "1011") then
             current_instruction <= BLT;
         end if;
-    elsif (Instruction = x"EB000000") then
-        current_instruction <= BX;
     end if;
 end process;
 
@@ -125,7 +129,7 @@ begin
                 RegAff <= '0';
                 Imm8 <= (others => '0');
                 Imm24 <= (others => '0');
-                end if;
+            end if;
         when CMP =>
             IRQ_END <= '0';
             nPCSel <= '0';

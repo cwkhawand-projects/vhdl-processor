@@ -5,6 +5,7 @@ entity TOP_LEVEL is
   port (
     CLOCK_50 : in std_logic;
     KEY	     :  IN  STD_LOGIC_VECTOR(1 DOWNTO 0);
+    SW       :  IN  STD_LOGIC_VECTOR(9 DOWNTO 0);
     HEX0     : out std_logic_vector(0 to 6);
     HEX1     : out std_logic_vector(0 to 6);
     HEX2     : out std_logic_vector(0 to 6);
@@ -26,6 +27,8 @@ processor: entity work.PROCESSOR
     port map (
         Clk      => CLOCK_50,
         Reset    => Reset,
+        IRQ0     => SW(0),
+        IRQ1     => SW(1),
         Display  => Display
     );
 

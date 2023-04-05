@@ -24,49 +24,34 @@ begin
 A <= std_logic_vector(unsigned(PC) + 1);
 B <= std_logic_vector(unsigned(A) + unsigned(Offset_extended));
 
-process(all)
+process(Clk, Reset)
 begin
-  if (IRQ_END = '0') then
-    if (IRQ = '1') then
-      LR_reg <= PC;
-      PC_mux <= VICPC;
-      IRQ_SERV <= '1';
-    else
-      IRQ_SERV <= '0';
-      
-      if (nPCsel = '0') then
-        PC_mux <= A;
+  if (Reset = '1') then
+    PC <= (others => '0');
+    LR <= (others => '0');
+    IRQ_SERV <= '0';
+  elsif rising_edge(Clk) then
+    if (IRQ_END = '0') then
+      if (IRQ = '1') then
+        LR <= PC;
+        PC <= VICPC;
+        IRQ_SERV <= '1';
       else
-        PC_mux <= B;
+        IRQ_SERV <= '0';
+        
+        if (nPCsel = '0') then
+          PC <= A;
+        else
+          PC <= B;
+        end if;
       end if;
-
-      LR_reg <= LR;
-    end if;
-  else
-    if (IRQ_END = '1') then
-      PC_mux <= std_logic_vector(unsigned(LR) + 1);
-      LR_reg <= LR;
+    elsif (IRQ_END = '1') then
+      PC <= std_logic_vector(unsigned(LR) + 1);
     end if;
   end if;
 end process;
 
-reg_pc: entity work.REG
-  port map (
-    Clk     => Clk,
-    Reset   => Reset,
-    DataIn  => PC_mux,
-    DataOut => PC
-  );
-
-reg_lr: entity work.REG
-  port map (
-    Clk     => Clk,
-    Reset   => Reset,
-    DataIn  => LR_reg,
-    DataOut => LR
-  );
-
-instruction_memory: entity work.INSTRUCTION_MEMORY_IRQ
+instruction_memory_irq: entity work.INSTRUCTION_MEMORY_IRQ
   port map (
     PC          => PC,
     Instruction => Instruction
