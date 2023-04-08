@@ -15,10 +15,12 @@ end TOP_LEVEL;
 
 architecture RTL of TOP_LEVEL is
     Signal Reset                  : std_logic;
+    Signal Button                 : std_logic_vector(1 downto 0);
     Signal Display                : std_logic_vector(31 downto 0);
 begin
 
-Reset <= not KEY(0);
+Reset <= SW(0);
+Button <= not KEY;
 
 processor: entity work.PROCESSOR
     generic map (
@@ -27,8 +29,8 @@ processor: entity work.PROCESSOR
     port map (
         Clk      => CLOCK_50,
         Reset    => Reset,
-        IRQ0     => SW(0),
-        IRQ1     => SW(1),
+        IRQ0     => Button(0),
+        IRQ1     => Button(1),
         Display  => Display
     );
 

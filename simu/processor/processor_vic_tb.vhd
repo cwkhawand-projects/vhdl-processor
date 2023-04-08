@@ -72,7 +72,7 @@ begin
 
 process
 begin
-    while (now <= 1500 ns) loop
+    while (now <= 2595 ns) loop
         Clk <= '0';
         wait for 5 ns;
         Clk <= '1';
@@ -84,6 +84,7 @@ end process;
 UUT: process
     variable memory : mem := init_memory;
     variable registers : regs := init_registers;
+    variable OK_var : boolean := TRUE;
 begin
     report "Starting processor testbench...";
 
@@ -92,7 +93,7 @@ begin
 
     Reset <= '0';
 
-    --for i in 0 to 1 loop
+    for i in 0 to 3 loop
         -- R1 = 0x10
         registers(1) := x"00000010";
         wait for 10 ns;
@@ -105,27 +106,25 @@ begin
             -- R0 = DATAMEM[R1] 
             registers(0) := memory(to_integer(unsigned(registers(1))));
             wait for 10 ns;
-
-            -- interrupt IRQ0
-            if (unsigned(registers(1)) + x"00000001" = x"00000012") then
-                IRQ0 <= '1';
-            end if;
             
             -- R2 = R2 + R0
             registers(2) := std_logic_vector(unsigned(registers(2)) + unsigned(registers(0)));
-            wait for 10 ns;
-
             -- interrupt IRQ0
-            if (unsigned(registers(1)) + x"00000001" = x"00000012") then
-                IRQ0 <= '0';
+            if (unsigned(registers(1)) + x"00000001" = x"00000012" and i mod 2 = 0) then
+                IRQ0 <= '1';
+            elsif (unsigned(registers(1)) + x"00000001" = x"00000012" and i mod 2 /= 0) then
+                IRQ1 <= '1';
             end if;
+            wait for 10 ns;
 
             -- R1 = R1 + 1
             registers(1) := std_logic_vector(unsigned(registers(1)) + x"00000001");
             wait for 10 ns;
 
             -- interrupt IRQ0
-            if (unsigned(registers(1)) = x"00000012") then                
+            if (unsigned(registers(1)) = x"00000012" and i mod 2 = 0) then   
+                IRQ0 <= '0';
+
                 -- MEM[R15] = R1 
                 memory(to_integer(unsigned(registers(15)))) := registers(1);
                 wait for 10 ns;
@@ -168,6 +167,55 @@ begin
 
                 -- BX
                 wait for 10 ns;
+
+                wait for 10 ns;
+            elsif (unsigned(registers(1)) = x"00000012" and i mod 2 /= 0) then   
+                IRQ1 <= '0';
+
+                -- MEM[R15] = R4 
+                memory(to_integer(unsigned(registers(15)))) := registers(4);
+                wait for 10 ns;
+
+                -- R15 = R15 + 1
+                registers(15) := std_logic_vector(unsigned(registers(15)) + x"00000001");
+                wait for 10 ns;
+
+                -- MEM[R15] = R5
+                memory(to_integer(unsigned(registers(15)))) := registers(5);
+                wait for 10 ns;
+
+                -- R5 = 0x10
+                registers(5) := x"00000010";
+                wait for 10 ns;
+
+                -- R4 = MEM[R5]
+                registers(4) := memory(to_integer(unsigned(registers(5))));
+                wait for 10 ns;
+
+                -- R4 = R4 + 2
+                registers(4) := std_logic_vector(unsigned(registers(4)) + x"00000002");
+                wait for 10 ns;
+
+                -- MEM[R5] = R4
+                memory(to_integer(unsigned(registers(5)))) := registers(4);
+                wait for 10 ns;
+
+                -- R5 = MEM[R15]
+                registers(5) := memory(to_integer(unsigned(registers(15))));
+                wait for 10 ns;
+
+                -- R15 = R15 - 1
+                registers(15) := std_logic_vector(unsigned(registers(15)) - x"00000001");
+                wait for 10 ns;
+
+                -- R4 <= MEM[R15]
+                registers(4) := memory(to_integer(unsigned(registers(15))));
+                wait for 10 ns;
+
+                -- BX
+                wait for 10 ns;
+
+                wait for 10 ns;
             end if;
 
             -- if R1 >= 0x1A 
@@ -183,13 +231,15 @@ begin
         memory(to_integer(unsigned(registers(1)))) := registers(2);
         wait for 10 ns;
 
-        -- PC = PC + (-7)
+        -- branch to _main
         wait for 10 ns;
 
-        OK <= check_memory(memory, << signal .processor_vic_tb.processor.processing_unit.memory.Memory : mem >>);
-        OK <= check_registers(registers, << signal .processor_vic_tb.processor.processing_unit.registers.Registers : regs >>);
+        OK_var := OK_var and check_memory(memory, << signal .processor_vic_tb.processor.processing_unit.memory.Memory : mem >>);
+        OK_var := OK_var and check_registers(registers, << signal .processor_vic_tb.processor.processing_unit.registers.Registers : regs >>);
 
-    --end loop;
+    end loop;
+
+    OK <= OK_var;
 
     wait for 10 ns;
 
