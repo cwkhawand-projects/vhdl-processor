@@ -1,7 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- process state register
 entity REG_EN is
   port (
     Clk     : in STD_LOGIC;

@@ -28,6 +28,7 @@ architecture RTL of PROCESSOR is
   Signal RegAff      : std_logic;
   Signal Imm8        : std_logic_vector(7 downto 0);
   Signal Imm24       : std_logic_vector(23 downto 0);
+  Signal UARTWr      : std_logic;
   Signal ALUout      : std_logic_vector(31 downto 0);
   Signal IRQ         : std_logic;
   Signal VICPC       : std_logic_vector(31 downto 0);
@@ -63,6 +64,7 @@ begin
       RegAff => RegAff,
       Imm8 => Imm8,
       Imm24 => Imm24,
+      UARTWr => UARTWr,
       IRQ_END => IRQ_END
     );
 

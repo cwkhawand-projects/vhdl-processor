@@ -17,6 +17,7 @@ entity INSTRUCTION_DECODER is
     RegAff      : out std_logic;
     Imm8        : out std_logic_vector(7 downto 0);
     Imm24       : out std_logic_vector(23 downto 0);
+    UARTWr      : out std_logic;
     IRQ_END     : out std_logic
   );
 end INSTRUCTION_DECODER;
@@ -182,6 +183,12 @@ begin
             RegAff <= '1';
             Imm8 <= (others => '0');
             Imm24 <= (others => '0');
+
+            if (Instruction(25) = '1' and Instruction(11 downto 0) = x"040") then
+                UARTWr <= '1';
+            else
+                UARTWr <= '0';
+            end if;
         when BX =>
             IRQ_END <= '1';
             nPCSel <= '0';
