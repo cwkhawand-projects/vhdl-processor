@@ -20,7 +20,7 @@ vcom -2008 ../../src/vectored_interrupt_controller.vhd
 vcom -2008 ../../src/processor.vhd
 vcom -2008 processor_uart_tb.vhd
 
-vsim processor_uart_tb(Bench)
+vsim processor_uart_tb(Bench_send_helloworld)
 
 view signals
 add wave *

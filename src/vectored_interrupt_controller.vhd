@@ -17,8 +17,8 @@ end VECTORED_INTERRUPT_CONTROLLER;
 architecture RTL of VECTORED_INTERRUPT_CONTROLLER is
     signal IRQ0_memo, IRQ1_memo, IRQTx_memo : std_logic;
 begin
-VICPC <= x"00000009" when IRQ0_memo = '1' else
-         x"00000015" when IRQ1_memo = '1' else
+VICPC <= x"0000000A" when IRQ0_memo = '1' else
+         x"00000016" when IRQ1_memo = '1' else
          x"0000001E" when IRQTx_memo = '1' else
          x"00000000";
 

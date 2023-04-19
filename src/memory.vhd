@@ -23,7 +23,7 @@ architecture RTL of MEMORY is
     function init_memory return table is
         variable result : table;
     begin
-        for i in SIZE-1 downto 0 loop
+        for i in SIZE-12 downto 0 loop
             if (not isTest) then
                 result(i) := (others => '0');
             else
@@ -31,6 +31,18 @@ architecture RTL of MEMORY is
             end if;
         end loop;
         
+        result(52) := std_logic_vector(to_unsigned(72, 32)); -- H
+        result(53) := std_logic_vector(to_unsigned(69, 32)); -- E
+        result(54) := std_logic_vector(to_unsigned(76, 32)); -- L
+        result(55) := std_logic_vector(to_unsigned(76, 32)); -- L
+        result(56) := std_logic_vector(to_unsigned(79, 32)); -- O
+        result(57) := std_logic_vector(to_unsigned(32, 32)); -- ' '
+        result(58) := std_logic_vector(to_unsigned(87, 32)); -- W
+        result(59) := std_logic_vector(to_unsigned(79, 32)); -- O
+        result(60) := std_logic_vector(to_unsigned(82, 32)); -- R
+        result(61) := std_logic_vector(to_unsigned(76, 32)); -- L
+        result(62) := std_logic_vector(to_unsigned(68, 32)); -- D
+        result(63) := std_logic_vector(to_unsigned(33, 32)); -- !
         return result;
     end init_memory;
 

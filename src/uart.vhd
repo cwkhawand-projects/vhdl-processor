@@ -7,7 +7,8 @@ entity UART is
     Reset   : in std_logic;
     Data    : in std_logic_vector(7 downto 0);
     UARTWr  : in std_logic;
-    Tx      : out std_logic
+    Tx      : out std_logic;
+    TxIrq   : out std_logic
   );
 end UART;
 
@@ -40,7 +41,8 @@ begin
       Go    => Go,
       Data  => DataReg(7 downto 0),
       Tick  => Tick,
-      Tx    => Tx
+      Tx    => Tx,
+      TxIrq => TxIrq
     );
 
 end RTL;

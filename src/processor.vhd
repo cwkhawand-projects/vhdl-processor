@@ -35,6 +35,7 @@ architecture RTL of PROCESSOR is
   Signal VICPC       : std_logic_vector(31 downto 0);
   Signal IRQ_END     : std_logic;
   Signal IRQ_SERV    : std_logic;
+  Signal TxIrq       : std_logic;
   Signal STRData     : std_logic_vector(31 downto 0);
 begin  
   instruction_unit: entity work.INSTRUCTION_UNIT(RTL)
@@ -110,6 +111,7 @@ begin
       IRQ_SERV => IRQ_SERV,
       IRQ0     => IRQ0,
       IRQ1     => IRQ1,
+      IRQTx    => TxIrq,
       IRQ      => IRQ,
       VICPC    => VICPC
     );
@@ -120,6 +122,7 @@ begin
       Reset  => Reset,
       Data   => STRData(7 downto 0),
       UARTWr => UARTWr,
-      Tx     => Tx
+      Tx     => Tx,
+      TxIrq  => TxIrq
     );
 end RTL;
