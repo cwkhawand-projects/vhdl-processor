@@ -177,17 +177,18 @@ begin
             ALUSrc <= '0';
             ALUctr <= "011";
             PSREn <= '0';
-            MemWr <= '1';
             WrSrc <= '0';
             RegSel <= '1';
             RegAff <= '1';
             Imm8 <= (others => '0');
             Imm24 <= (others => '0');
 
-            if (Instruction(25) = '1' and Instruction(11 downto 0) = x"040") then
+            if (Instruction(25) = '0' and Instruction(11 downto 0) = x"040") then
                 UARTWr <= '1';
+                MemWr <= '0';
             else
                 UARTWr <= '0';
+                MemWr <= '1';
             end if;
         when BX =>
             IRQ_END <= '1';

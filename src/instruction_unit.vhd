@@ -51,7 +51,7 @@ begin
   end if;
 end process;
 
-instruction_memory_irq: entity work.INSTRUCTION_MEMORY_IRQ
+instruction_memory_uart: entity work.INSTRUCTION_MEMORY_UART(SEND_1)
   port map (
     PC          => PC,
     Instruction => Instruction

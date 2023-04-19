@@ -10,7 +10,8 @@ entity PROCESSOR is
     Reset   : in STD_LOGIC;
     IRQ0    : in STD_LOGIC;
     IRQ1    : in STD_LOGIC;
-    Display : out STD_LOGIC_VECTOR(31 downto 0)
+    Display : out STD_LOGIC_VECTOR(31 downto 0);
+    Tx      : out STD_LOGIC
   );
 end PROCESSOR;
 
@@ -34,7 +35,8 @@ architecture RTL of PROCESSOR is
   Signal VICPC       : std_logic_vector(31 downto 0);
   Signal IRQ_END     : std_logic;
   Signal IRQ_SERV    : std_logic;
-begin
+  Signal STRData     : std_logic_vector(31 downto 0);
+begin  
   instruction_unit: entity work.INSTRUCTION_UNIT(RTL)
     port map (
       Clk => Clk,
@@ -89,17 +91,35 @@ begin
       PSREn   => PSREn,
       ALUout  => open,
       Flags   => Flags,
-      Display => Display
+      STRData => STRData
     );
 
-    vectored_interrupt_controller: entity work.VECTORED_INTERRUPT_CONTROLLER(RTL)
-      port map (
-        Clk      => Clk,
-        Reset    => Reset,
-        IRQ_SERV => IRQ_SERV,
-        IRQ0     => IRQ0,
-        IRQ1     => IRQ1,
-        IRQ      => IRQ,
-        VICPC    => VICPC
-      );
+  reg_str: entity work.REG_EN(RTL)
+    port map (
+      Clk     => Clk,
+      Reset   => Reset,
+      DataIn  => STRData,
+      WrEn    => RegAff,
+      DataOut => Display
+    );
+
+  vectored_interrupt_controller: entity work.VECTORED_INTERRUPT_CONTROLLER(RTL)
+    port map (
+      Clk      => Clk,
+      Reset    => Reset,
+      IRQ_SERV => IRQ_SERV,
+      IRQ0     => IRQ0,
+      IRQ1     => IRQ1,
+      IRQ      => IRQ,
+      VICPC    => VICPC
+    );
+
+  uart: entity work.UART
+    port map (
+      Clk    => Clk,
+      Reset  => Reset,
+      Data   => STRData(7 downto 0),
+      UARTWr => UARTWr,
+      Tx     => Tx
+    );
 end RTL;

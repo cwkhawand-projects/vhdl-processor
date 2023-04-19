@@ -36,7 +36,7 @@ architecture RTL of MEMORY is
 
     signal Memory : table := init_memory;
 begin
-    DataOut <= Memory(to_integer(unsigned(Addr)));
+    DataOut <= Memory(to_integer(unsigned(Addr))) when to_integer(unsigned(Addr)) < SIZE else (others => 'X');
 
     process (Clk, Reset)
     begin

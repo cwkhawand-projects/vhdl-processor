@@ -12,8 +12,8 @@ entity UART is
 end UART;
 
 architecture RTL of UART is
-    Signal Tick    : std_logic;
-    Signal DataReg : std_logic_vector(31 downto 0);
+    Signal Tick, Go : std_logic;
+    Signal DataReg  : std_logic_vector(31 downto 0);
 begin
 
   fdiv: entity work.FDIV
@@ -23,23 +23,24 @@ begin
       Tick  => Tick
     );
 
+  UART_Conf: entity work.REG_UART
+  port map (
+    Clk     => Clk,
+    Reset   => Reset,
+    DataIn  => x"000000"&Data,
+    WrEn    => UARTWr,
+    DataOut => DataReg,
+    Go      => Go
+  );
+
   UART_TX: entity work.UART_TX
     port map (
       Clk   => Clk,
       Reset => Reset,
-      Go    => UARTWr,
+      Go    => Go,
       Data  => DataReg(7 downto 0),
       Tick  => Tick,
       Tx    => Tx
-    );
-
-  UART_Conf: entity work.REG_EN
-    port map (
-      Clk     => Clk,
-      Reset   => Reset,
-      DataIn  => x"000000"&Data,
-      WrEn    => UARTWr,
-      DataOut => DataReg
     );
 
 end RTL;

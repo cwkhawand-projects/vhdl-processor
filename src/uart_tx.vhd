@@ -8,7 +8,8 @@ entity UART_TX is
         Go    : in std_logic;
         Data  : in std_logic_vector(7 downto 0);
         Tick  : in std_logic;
-        Tx    : out std_logic
+        Tx    : out std_logic;
+        TxIrq : out std_logic
     );
 end UART_TX;
 
@@ -24,6 +25,7 @@ process (Clk, Reset)
 begin
     if Reset = '1' then
         Tx <= '1';
+        TxIrq <= '0';
         count_bit <= 0;
         reg <= (others => '0');
     elsif rising_edge(Clk) then
@@ -33,6 +35,7 @@ begin
                     State <= E2;
                     reg <= '1' & Data & '0';
                     count_bit <= 0;
+                    TxIrq <= '0';
                 end if;
             when E2 =>
                 if Tick = '1' then
@@ -46,6 +49,7 @@ begin
                 if (count_bit = 10) then
                     State <= E1;
                     count_bit <= 0;
+                    TxIrq <= '1';
                 elsif Tick = '1' then
                     State <= E3;
                     Tx <= reg(count_bit);

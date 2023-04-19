@@ -22,7 +22,7 @@ entity PROCESSING_UNIT is
     PSREn    : in std_logic;
     ALUout   : out std_logic_vector(31 downto 0);
     Flags    : out std_logic_vector(3 downto 0);
-    Display  : out std_logic_vector(31 downto 0)
+    STRData  : out std_logic_vector(31 downto 0)
   );
 end PROCESSING_UNIT;
 
@@ -37,6 +37,7 @@ begin
 
   RW <= Rd;
   RA <= Rn;
+  STRData <= BusB;
   Flags <= Flags_reg(31 downto 28);
 
   mux2v1_rb: entity work.MUX2V1(RTL)
@@ -117,14 +118,5 @@ begin
       B   => DataOut,
       COM => WrSrc,
       S   => BusW
-    );
-
-  reg_display: entity work.REG_EN(RTL)
-    port map (
-      Clk     => Clk,
-      Reset   => Reset,
-      DataIn  => BusB,
-      WrEn    => RegAff,
-      DataOut => Display
     );
 end RTL;

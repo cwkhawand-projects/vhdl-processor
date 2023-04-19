@@ -9,7 +9,8 @@ entity TOP_LEVEL is
     HEX0     : out std_logic_vector(0 to 6);
     HEX1     : out std_logic_vector(0 to 6);
     HEX2     : out std_logic_vector(0 to 6);
-    HEX3     : out std_logic_vector(0 to 6)
+    HEX3     : out std_logic_vector(0 to 6);
+    GPIO     : out std_logic_vector(0 to 1)
   );
 end TOP_LEVEL;
 
@@ -31,7 +32,8 @@ processor: entity work.PROCESSOR
         Reset    => Reset,
         IRQ0     => Button(0),
         IRQ1     => Button(1),
-        Display  => Display
+        Display  => Display,
+        Tx       => GPIO(0)
     );
 
 seven_seg_decoder_0: entity work.SEVEN_SEG_DECODER
