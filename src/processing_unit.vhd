@@ -20,6 +20,8 @@ entity PROCESSING_UNIT is
     ALUctr   : in std_logic_vector(2 downto 0);
     ALUSrc   : in std_logic;
     PSREn    : in std_logic;
+    RxData   : in std_logic_vector(7 downto 0);
+    RxSrc    : in std_logic;
     ALUout   : out std_logic_vector(31 downto 0);
     Flags    : out std_logic_vector(3 downto 0);
     STRData  : out std_logic_vector(31 downto 0)
@@ -112,11 +114,14 @@ begin
       WrEn => MemWr
     );
 
-  mux2v1_mem: entity work.MUX2V1(RTL)
-    port map (
-      A   => BusW_unmux,
-      B   => DataOut,
-      COM => WrSrc,
-      S   => BusW
-    );
+  mux3v1_mem: process(WrSrc, RxSrc, BusW_unmux, DataOut, RxData)
+  begin
+    if RxSrc = '1' then
+      BusW <= x"000000"&RxData;
+    elsif WrSrc = '0' then
+      BusW <= BusW_unmux;
+    elsif WrSrc = '1' then
+      BusW <= DataOut;
+    end if;
+  end process;
 end RTL;

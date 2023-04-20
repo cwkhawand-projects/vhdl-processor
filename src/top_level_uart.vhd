@@ -6,7 +6,7 @@ entity TOP_LEVEL_UART is
     CLOCK_50 : IN std_logic;
     KEY	     : IN  STD_LOGIC_VECTOR(1 DOWNTO 0);
     SW       : IN  STD_LOGIC_VECTOR(9 DOWNTO 0);
-    GPIO     : OUT STD_LOGIC_VECTOR(0 to 1)
+    GPIO     : INOUT STD_LOGIC_VECTOR(0 to 1)
   );
 end TOP_LEVEL_UART;
 
@@ -32,7 +32,8 @@ uart: entity work.UART
     Reset   => Reset,
     Data    => SW(7 downto 0),
     UARTWr  => Go,
-    Tx      => GPIO(0)
+    Tx      => GPIO(0),
+    Rx      => GPIO(1)
   );
 
 end RTL;

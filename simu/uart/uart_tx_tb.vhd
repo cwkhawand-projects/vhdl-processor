@@ -62,9 +62,10 @@ end process;
 
 fdiv: entity work.FDIV
     port map (
-        Clk   => Clk,
-        Reset => Reset,
-        Tick  => Tick
+        Clk       => Clk,
+        Reset     => Reset,
+        Tick      => Tick,
+        Tick_half => open
     );
 
 UART_TX: entity work.UART_TX

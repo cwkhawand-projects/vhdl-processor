@@ -10,8 +10,9 @@ entity PROCESSOR is
     Reset   : in STD_LOGIC;
     IRQ0    : in STD_LOGIC;
     IRQ1    : in STD_LOGIC;
-    Display : out STD_LOGIC_VECTOR(31 downto 0);
-    Tx      : out STD_LOGIC
+    Rx      : in STD_LOGIC;
+    Tx      : out STD_LOGIC;
+    Display : out STD_LOGIC_VECTOR(31 downto 0)
   );
 end PROCESSOR;
 
@@ -36,6 +37,9 @@ architecture RTL of PROCESSOR is
   Signal IRQ_END     : std_logic;
   Signal IRQ_SERV    : std_logic;
   Signal TxIrq       : std_logic;
+  Signal RxSrc       : std_logic;
+  Signal RxIrq       : std_logic;
+  Signal RxData      : std_logic_vector(7 downto 0);
   Signal STRData     : std_logic_vector(31 downto 0);
 begin  
   instruction_unit: entity work.INSTRUCTION_UNIT(RTL)
@@ -68,6 +72,7 @@ begin
       Imm8 => Imm8,
       Imm24 => Imm24,
       UARTWr => UARTWr,
+      RxSrc => RxSrc,
       IRQ_END => IRQ_END
     );
 
@@ -90,6 +95,8 @@ begin
       ALUctr  => ALUctr,
       ALUSrc  => ALUSrc,
       PSREn   => PSREn,
+      RxData  => RxData,
+      RxSrc   => RxSrc,
       ALUout  => open,
       Flags   => Flags,
       STRData => STRData
@@ -112,6 +119,7 @@ begin
       IRQ0     => IRQ0,
       IRQ1     => IRQ1,
       IRQTx    => TxIrq,
+      IRQRx    => RxIrq,
       IRQ      => IRQ,
       VICPC    => VICPC
     );
@@ -123,6 +131,9 @@ begin
       Data   => STRData(7 downto 0),
       UARTWr => UARTWr,
       Tx     => Tx,
-      TxIrq  => TxIrq
+      TxIrq  => TxIrq,
+      Rx     => Rx,
+      RxData => RxData,
+      RxIrq  => RxIrq
     );
 end RTL;
