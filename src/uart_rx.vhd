@@ -25,6 +25,7 @@ begin
 process (Clk, Reset)
 begin
     if Reset = '1' then
+        State <= E1;
         RxIrq <= '0';
         count_bit <= 0;
         reg <= (others => '0');

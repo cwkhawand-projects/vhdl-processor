@@ -23,7 +23,7 @@ begin
   fdiv: entity work.FDIV
     port map (
       Clk   => Clk,
-      Reset => Reset,
+      Reset => Reset or Clear_fdiv,
       Tick  => Tick,
       Tick_half => Tick_half
     );
