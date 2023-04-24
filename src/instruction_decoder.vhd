@@ -17,6 +17,8 @@ entity INSTRUCTION_DECODER is
     RegAff      : out std_logic;
     Imm8        : out std_logic_vector(7 downto 0);
     Imm24       : out std_logic_vector(23 downto 0);
+    UARTWr      : out std_logic;
+    RxSrc       : out std_logic;
     IRQ_END     : out std_logic
   );
 end INSTRUCTION_DECODER;
@@ -77,6 +79,8 @@ begin
             RegAff <= '0';
             Imm8 <= Instruction(7 downto 0);
             Imm24 <= (others => '0');
+            UARTWr <= '0';
+            RxSrc <= '0';
         when ADDr =>
             IRQ_END <= '0';
             nPCSel <= '0';
@@ -90,6 +94,8 @@ begin
             RegAff <= '0';
             Imm8 <= (others => '0');
             Imm24 <= (others => '0');
+            UARTWr <= '0';
+            RxSrc <= '0';
         when BAL =>
             IRQ_END <= '0';
             nPCSel <= '1';
@@ -103,6 +109,8 @@ begin
             RegAff <= '0';
             Imm8 <= (others => '0');
             Imm24 <= Instruction(23 downto 0);
+            UARTWr <= '0';
+            RxSrc <= '0';
         when BLT =>
             IRQ_END <= '0';
             if (Flags(3) = '1') then
@@ -117,6 +125,8 @@ begin
                 RegAff <= '0';
                 Imm8 <= (others => '0');
                 Imm24 <= Instruction(23 downto 0);
+                UARTWr <= '0';
+                RxSrc <= '0';
             else
                 nPCSel <= '1';
                 RegWr <= '0';
@@ -129,6 +139,8 @@ begin
                 RegAff <= '0';
                 Imm8 <= (others => '0');
                 Imm24 <= (others => '0');
+                UARTWr <= '0';
+                RxSrc <= '0';
             end if;
         when CMP =>
             IRQ_END <= '0';
@@ -143,6 +155,8 @@ begin
             RegAff <= '0';
             Imm8 <= Instruction(7 downto 0);
             Imm24 <= (others => '0');
+            UARTWr <= '0';
+            RxSrc <= '0';
         when LDR =>
             IRQ_END <= '0';
             nPCSel <= '1';
@@ -156,6 +170,13 @@ begin
             RegAff <= '0';
             Imm8 <= (others => '0');
             Imm24 <= (others => '0');
+            UARTWr <= '0';
+
+            if (Instruction(25) = '0' and Instruction(11 downto 0) = x"040") then
+                RxSrc <= '1';
+            else
+                RxSrc <= '0';
+            end if;
         when MOV =>
             IRQ_END <= '0';
             nPCSel <= '0';
@@ -169,6 +190,8 @@ begin
             RegAff <= '0';
             Imm8 <= Instruction(7 downto 0);
             Imm24 <= (others => '0');
+            UARTWr <= '0';
+            RxSrc <= '0';
         when STR =>
             IRQ_END <= '0';
             nPCSel <= '0';
@@ -176,12 +199,20 @@ begin
             ALUSrc <= '0';
             ALUctr <= "011";
             PSREn <= '0';
-            MemWr <= '1';
             WrSrc <= '0';
             RegSel <= '1';
             RegAff <= '1';
             Imm8 <= (others => '0');
             Imm24 <= (others => '0');
+            RxSrc <= '0';
+
+            if (Instruction(25) = '0' and Instruction(11 downto 0) = x"040") then
+                UARTWr <= '1';
+                MemWr <= '0';
+            else
+                UARTWr <= '0';
+                MemWr <= '1';
+            end if;
         when BX =>
             IRQ_END <= '1';
             nPCSel <= '0';
@@ -195,6 +226,8 @@ begin
             RegAff <= '0';
             Imm8 <= (others => '0');
             Imm24 <= (others => '0');
+            UARTWr <= '0';
+            RxSrc <= '0';
         when others =>
             IRQ_END <= '0';
             nPCSel <= '0';
@@ -208,6 +241,8 @@ begin
             RegAff <= '0';
             Imm8 <= (others => '0');
             Imm24 <= (others => '0');
+            UARTWr <= '0';
+            RxSrc <= '0';
     end case;
 end process;
 

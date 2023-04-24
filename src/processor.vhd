@@ -10,6 +10,8 @@ entity PROCESSOR is
     Reset   : in STD_LOGIC;
     IRQ0    : in STD_LOGIC;
     IRQ1    : in STD_LOGIC;
+    Rx      : in STD_LOGIC;
+    Tx      : out STD_LOGIC;
     Display : out STD_LOGIC_VECTOR(31 downto 0)
   );
 end PROCESSOR;
@@ -28,12 +30,18 @@ architecture RTL of PROCESSOR is
   Signal RegAff      : std_logic;
   Signal Imm8        : std_logic_vector(7 downto 0);
   Signal Imm24       : std_logic_vector(23 downto 0);
+  Signal UARTWr      : std_logic;
   Signal ALUout      : std_logic_vector(31 downto 0);
   Signal IRQ         : std_logic;
   Signal VICPC       : std_logic_vector(31 downto 0);
   Signal IRQ_END     : std_logic;
   Signal IRQ_SERV    : std_logic;
-begin
+  Signal TxIrq       : std_logic;
+  Signal RxSrc       : std_logic;
+  Signal RxIrq       : std_logic;
+  Signal RxData      : std_logic_vector(7 downto 0);
+  Signal STRData     : std_logic_vector(31 downto 0);
+begin  
   instruction_unit: entity work.INSTRUCTION_UNIT(RTL)
     port map (
       Clk => Clk,
@@ -63,6 +71,8 @@ begin
       RegAff => RegAff,
       Imm8 => Imm8,
       Imm24 => Imm24,
+      UARTWr => UARTWr,
+      RxSrc => RxSrc,
       IRQ_END => IRQ_END
     );
 
@@ -85,19 +95,45 @@ begin
       ALUctr  => ALUctr,
       ALUSrc  => ALUSrc,
       PSREn   => PSREn,
+      RxData  => RxData,
+      RxSrc   => RxSrc,
       ALUout  => open,
       Flags   => Flags,
-      Display => Display
+      STRData => STRData
     );
 
-    vectored_interrupt_controller: entity work.VECTORED_INTERRUPT_CONTROLLER(RTL)
-      port map (
-        Clk      => Clk,
-        Reset    => Reset,
-        IRQ_SERV => IRQ_SERV,
-        IRQ0     => IRQ0,
-        IRQ1     => IRQ1,
-        IRQ      => IRQ,
-        VICPC    => VICPC
-      );
+  reg_str: entity work.REG_EN(RTL)
+    port map (
+      Clk     => Clk,
+      Reset   => Reset,
+      DataIn  => STRData,
+      WrEn    => RegAff,
+      DataOut => Display
+    );
+
+  vectored_interrupt_controller: entity work.VECTORED_INTERRUPT_CONTROLLER(RTL)
+    port map (
+      Clk      => Clk,
+      Reset    => Reset,
+      IRQ_SERV => IRQ_SERV,
+      IRQ0     => IRQ0,
+      IRQ1     => IRQ1,
+      IRQTx    => TxIrq,
+      IRQRx    => RxIrq,
+      IRQ      => IRQ,
+      VICPC    => VICPC
+    );
+
+  uart: entity work.UART
+    port map (
+      Clk    => Clk,
+      Reset  => Reset,
+      Data   => STRData(7 downto 0),
+      UARTWr => UARTWr,
+      Tx     => Tx,
+      TxIrq  => TxIrq,
+      Rx     => Rx,
+      RxData => RxData,
+      RxIrq  => RxIrq
+    );
 end RTL;

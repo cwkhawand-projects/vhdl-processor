@@ -25,11 +25,13 @@ architecture RTL of REGISTERS is
     function init_registers return table is
         variable result : table;
     begin
-        for i in SIZE-2 downto 0 loop
+        for i in SIZE-4 downto 0 loop
             result(i) := (others => '0');
         end loop;
         
-        result(SIZE-1) := x"00000030";
+        result(SIZE-3) := x"00000034"; -- $txp
+        result(SIZE-2) := x"00000034"; -- $rxp
+        result(SIZE-1) := x"00000030"; -- $sp
         return result;
     end init_registers;
 
