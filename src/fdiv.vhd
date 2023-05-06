@@ -24,6 +24,8 @@ begin
     begin
         if Reset = '1' then
             counter := 0;
+            Tick <= '0';
+            Tick_half <= '0';
         elsif rising_edge(Clk) then
             counter := counter + 1;
 

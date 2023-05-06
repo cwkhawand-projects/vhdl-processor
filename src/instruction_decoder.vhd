@@ -159,7 +159,7 @@ begin
             RxSrc <= '0';
         when LDR =>
             IRQ_END <= '0';
-            nPCSel <= '1';
+            nPCSel <= '0';
             RegWr <= '1';
             ALUSrc <= '0';
             ALUctr <= "011";
