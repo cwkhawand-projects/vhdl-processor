@@ -43,5 +43,8 @@ The VHDL implementation of the ARM7TDMI processor follows the ARM7TDMI specifica
 
 The architecture is designed to be modular and easily configurable to meet specific project requirements.
 
+## /!\ Note
+Some testbenches might not work because the entities related to them have changed.
+
 ## License
 This project is licensed under the MPL2.0 License, which allows you to use, modify, and distribute the code freely. See the LICENSE file for more information.
