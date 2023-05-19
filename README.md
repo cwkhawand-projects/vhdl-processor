@@ -27,7 +27,7 @@ git clone https://github.com/cwkhawand/vhdl-processor.git
 ```
 
 2. Open the project in your favorite VHDL development environment (e.g., Xilinx ISE, Intel Quartus Prime).
-3.Configure the desired settings for the processor, such as clock frequency, memory size, and UART parameters.
+3. Configure the desired settings for the processor, such as clock frequency, memory size, and UART parameters.
 4. Build the project and synthesize the design to obtain the corresponding bitstream.
 5. Program the bitstream onto your FPGA development board.
 6. Connect peripherals and devices, such as a UART terminal, to the appropriate pins on your FPGA board.
